@@ -3,6 +3,7 @@ title: "HackerNote"
 author: "Divyanshu Sharma"
 date: 2022-11-19
 permalink: /tryhackme/hackernote
+tags: tryhackme
 ---
 
 # IP
