@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "corridor"
-permalink: /tryhackme/corridor
+permalink: /tryhackme
 ---
 # IP
 10.10.111.92
