@@ -2,6 +2,10 @@
 layout: page
 title: "corridor"
 permalink: /tryhackme/corridor
+remote_theme: pages-themes/hacker@v0.2.0
+title: Blog
+plugins:
+- jekyll-remote-theme 
 ---
 # IP
 10.10.111.92
