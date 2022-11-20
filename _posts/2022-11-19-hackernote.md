@@ -1,6 +1,7 @@
 ---
 title: "HackerNote"
 date: 2022-11-19
+permalink: /tryhackme/corridor
 ---
 
 # IP
