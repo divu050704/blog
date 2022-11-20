@@ -1,1 +1,4 @@
-# Index for other blogs
+---
+title: "Random"
+
+---
