@@ -1,1 +1,1 @@
-title: Index
+# Index for other blogs
