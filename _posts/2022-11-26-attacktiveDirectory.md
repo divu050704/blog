@@ -1,5 +1,5 @@
 ---
-title: "AttacktiveDirectory"
+title: "Attacktive Directory"
 author: "Divyanshu Sharma"
 date: 2022-10-26
 permalink: /tryhackme/attacktiveDirectory
