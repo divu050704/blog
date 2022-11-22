@@ -12,7 +12,7 @@ This is my tryhackme Index, for walkthroughs and blogs. It contains most of the 
 2. [Blog](https://divu050704.github.io/blog/tryhackme/blog)
 3. [Ovarpass](https://divu050704.github.io/blog/tryhackme/overpass)
 4. [All In One](https://divu050704.github.io/blog/tryhackme/all-in-one)
-5. [Annie](https://divu050704.github.io/blog/tryhackme/annie){:target="\_blank"}
+5. [Annie](https://divu050704.github.io/blog/tryhackme/annie)
 6. [Couch](https://divu050704.github.io/blog/tryhackme/couch)
 7. [Flatline](https://divu050704.github.io/blog/tryhackme/flatline)
 8. [Gallery](https://divu050704.github.io/blog/tryhackme/gallery666)
