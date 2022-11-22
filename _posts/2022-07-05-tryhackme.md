@@ -4,9 +4,10 @@ author: "Divyanshu Sharma"
 date: 2022-07-05
 permalink: /tryhackme/
 tags: tryhackme
-custom-javascript-list:
-  https://tryhackme.com/badge/771740
 ---
+
+
+<script src="https://tryhackme.com/badge/771740"></script>
 
 This is my tryhackme Index, for walkthroughs and blogs. It contains most of the CTFs and walkthroughs that I have practised since last year.
 
