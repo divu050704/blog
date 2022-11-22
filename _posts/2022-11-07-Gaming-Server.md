@@ -2,7 +2,7 @@
 title: "Gaming Sever"
 Date: 2022-11-07
 author: "Divyanshu Sharma"
-permalink: /tryhackme/gamingserver
+permalink: /tryhackme/gaming-server
 tags: tryhackme
 ---
 
