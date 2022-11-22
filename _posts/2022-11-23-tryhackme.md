@@ -2,7 +2,7 @@
 title: "Tryhackme"
 author: "Divyanshu Sharma"
 date: 2022-11-23
-permalink: /tryhackme
+permalink: /tryhackme/
 tags: tryhackme
 ---
 
