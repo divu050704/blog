@@ -7,5 +7,5 @@ title: "Index"
 
 This is an Index for blogs on various Tech topics, which I stumbled upon while running programming and in my cybersecurity experience.
 
-### [Tryhackme](https://divu050704.github.io/blog/tryhackme/)
+# [Tryhackme](https://divu050704.github.io/blog/tryhackme/){:target="\_blank"}
 TryHackMe is a free online platform for learning cyber security, using hands-on exercises and labs, all through your browser!
