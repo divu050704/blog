@@ -1,7 +1,7 @@
 ---
 title: "Tryhackme"
 author: "Divyanshu Sharma"
-date: 2022-11-19
+date: 2022-11-23
 permalink: /tryhackme
 tags: tryhackme
 ---
