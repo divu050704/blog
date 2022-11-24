@@ -6,9 +6,13 @@ permalink: /tryhackme/mustacchio
 tags: tryhackme
 ---
 # IP
+
 10.10.208.17
+
 ## Enumeration
+
 ### Nmap
+
 Found three ports running on the system
 1. 22/tcp   open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.10 (Ubuntu Linux; protocol 2.0)
 2. 80/tcp   open  http    Apache httpd 2.4.18 ((Ubuntu))
