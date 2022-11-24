@@ -27,3 +27,8 @@ This is my tryhackme Index, for walkthroughs and blogs. It contains most of the 
 ## 14. [Corridor](https://divu050704.github.io/blog/tryhackme/corridor)
 ## 15. [Linux Agency](https://divu050704.github.io/blog/tryhackme/linux-agency)
 ## 16. [Attactive Directory](https://divu050704.github.io/blog/tryhackme/attacktiveDirectory)
+## 17. [Internal](https://divu050704.github.io/blog/tryhackme/internal)
+## 18. [JPGChat](https://divu050704.github.io/blog/tryhackme/jpgchat)
+## 19. [KoTH Food CTF](https://divu050704.github.io/blog/tryhackme/koth-food-ctf)
+## 20. [Mustacchio](https://divu050704.github.io/blog/tryhackme/mustacchio)
+## 21. [Neighbour](https://divu050704.github.io/blog/tryhackme/neighbour)
