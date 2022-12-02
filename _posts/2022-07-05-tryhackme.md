@@ -38,3 +38,6 @@ This is my tryhackme Index, for walkthroughs and blogs. It contains most of the 
 ## 25. [Team](https://divu050704.github.io/blog/tryhackme/team)
 ## 26. [Marketplace](https://divu050704.github.io/blog/tryhackme/marketplace)
 ## 27. [Inferno](https://divu050704.github.io/blog/tryhackme/inferno)
+## 28. [TechSupport](https://divu050704.github.io/blog/tryhackme/techsupport1)
+## 29. [Template](https://divu050704.github.io/blog/tryhackme/templates)
+## 30. [UltraTech](https://divu050704.github.io/blog/tryhackme/ultratech01)
