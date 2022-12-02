@@ -36,3 +36,5 @@ This is my tryhackme Index, for walkthroughs and blogs. It contains most of the 
 ## 23. [Relevant](https://divu050704.github.io/blog/tryhackme/relevant)
 ## 24. [Road](https://divu050704.github.io/blog/tryhackme/road)
 ## 25. [Team](https://divu050704.github.io/blog/tryhackme/team)
+## 26. [Marketplace](https://divu050704.github.io/blog/tryhackme/marketplace)
+## 27. [Inferno](https://divu050704.github.io/blog/tryhackme/inferno)
