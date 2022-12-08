@@ -41,3 +41,9 @@ This is my tryhackme Index, for walkthroughs and blogs. It contains most of the 
 ## 28. [TechSupport](https://divu050704.github.io/blog/tryhackme/techsupport1)
 ## 29. [Template](https://divu050704.github.io/blog/tryhackme/templates)
 ## 30. [UltraTech](https://divu050704.github.io/blog/tryhackme/ultratech01)
+## 31. [Tokyo Ghoul](https://divu050704.github.io/blog/tryhackme/tokyoghoul666)
+## 32. [Vulnnetinternal](https://divu050704.github.io/blog/tryhackme/vulnnetinternal)
+## 33. [Watcher](https://divu050704.github.io/blog/tryhackme/watcher)
+## 34. [Wonderland](https://divu050704.github.io/blog/tryhackme/wonderland)
+## 35. [Wreath Network](https://divu050704.github.io/blog/tryhackme/wreath-network)
+
