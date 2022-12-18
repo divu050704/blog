@@ -3,3 +3,5 @@ Upload
 - tryhackme/convermyvideo
 - tryhackme/thompson
 - tryhackme/b3dr0ck
+- hackthebox/metatwo
+- hackthebox/shoppy
