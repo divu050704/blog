@@ -1,8 +1,8 @@
 ---
-title: "Meta Two"
+title: "Hack The Box"
 author: "Divyanshu Sharma"
 date: 2022-12-19
-permalink: /hackthebox/metatwo
+permalink: /hackthebox
 tags: hackthebox
 ---
 
