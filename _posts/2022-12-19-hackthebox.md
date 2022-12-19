@@ -2,7 +2,7 @@
 title: "Hack The Box"
 author: "Divyanshu Sharma"
 date: 2022-12-19
-permalink: /hackthebox
+permalink: /hackthebox/
 tags: hackthebox
 ---
 
