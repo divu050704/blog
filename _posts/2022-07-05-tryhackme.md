@@ -46,4 +46,8 @@ This is my tryhackme Index, for walkthroughs and blogs. It contains most of the 
 ## 33. [Watcher](https://divu050704.github.io/blog/tryhackme/watcher)
 ## 34. [Wonderland](https://divu050704.github.io/blog/tryhackme/wonderland)
 ## 35. [Wreath Network](https://divu050704.github.io/blog/tryhackme/wreath-network)
+## 36. [Joker CTF](https://divu050704.github.io/blog/tryhackme/joker)
+## 37. [Convert My Video](https://divu050704.github.io/blog/tryhackme/convert-my-video)
+## 38. [Thompson](https://divu050704.github.io/blog/tryhackme/thompson)
+## 39. [B3dr0ck](https://divu050704.github.io/blog/tryhackme/b3dr0ck)
 
