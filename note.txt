@@ -5,3 +5,4 @@ Upload
 - tryhackme/b3dr0ck
 - hackthebox/metatwo
 - hackthebox/shoppy
+- hackethebox/soccer
