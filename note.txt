@@ -1,8 +1,4 @@
 Upload 
-- tryhackme/jokerctf
-- tryhackme/convermyvideo
-- tryhackme/thompson
-- tryhackme/b3dr0ck
-- hackthebox/metatwo
-- hackthebox/shoppy
-- hackethebox/soccer
+- hackthebox/photobomb
+- tryhackme/dogcat
+- tryhackme/vulnnetendgame
