@@ -2,3 +2,4 @@ Upload
 - hackthebox/photobomb
 - tryhackme/dogcat
 - tryhackme/vulnnetendgame
+- tryhackme/archangel
