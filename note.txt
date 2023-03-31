@@ -3,3 +3,4 @@ Upload
 - tryhackme/dogcat
 - tryhackme/vulnnetendgame
 - tryhackme/archangel
+- tryhackme/bsidesgtlibrary
