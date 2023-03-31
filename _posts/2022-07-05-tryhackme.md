@@ -50,4 +50,7 @@ This is my tryhackme Index, for walkthroughs and blogs. It contains most of the 
 ## 37. [Convert My Video](https://divu050704.github.io/blog/tryhackme/convert-my-video)
 ## 38. [Thompson](https://divu050704.github.io/blog/tryhackme/thompson)
 ## 39. [B3dr0ck](https://divu050704.github.io/blog/tryhackme/b3dr0ck)
-
+## 40. [dogcat](https://divu050704.github.io/blog/tryhackme/dogcat)
+## 41. [Vulnnet Endgame](https://divu050704.github.io/blog/tryhackme/vulnnetendgame)
+## 42. [Archangel](https://divu050704.github.io/blog/tryhackme/archangel)
+## 43. [Bsides guatemala Library](https://divu050704.github.io/blog/tryhackme/bsidesgtlibrary)
