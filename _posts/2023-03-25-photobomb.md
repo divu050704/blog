@@ -3,7 +3,7 @@ title: "Photobomb"
 author: "Divyanshu Sharma"
 date: 2023-03-25
 permalink: /hackthebox/photobomb
-tags: tryhackme
+tags: hackthebox
 ---
 
 - Started `rustscan` and scanned for ports.
