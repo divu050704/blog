@@ -1,7 +1,7 @@
 ---
 title: "Thompson"
 author: "Divyanshu Sharma"
-date: 2022-12-19
+date: 2023-03-25
 permalink: /hackthebox/photobomb
 tags: tryhackme
 ---
