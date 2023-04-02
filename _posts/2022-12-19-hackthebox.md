@@ -12,3 +12,4 @@ This is my tryhackme Index, for walkthroughs and blogs. It contains most of the 
 ## 2. [Meta Two](https://divu050704.github.io/blog/hackthebox/metatwo)
 ## 3. [Soccer](https://divu050704.github.io/blog/hackthebox/soccer)
 ## 4. [Photobomb](https://divu050704.github.io/blog/hackthebox/photobomb)
+## 5. [Precious](https://divu050704.github.io/blog/hackthebox/photobomb/precious)
