@@ -13,3 +13,4 @@ This is my tryhackme Index, for walkthroughs and blogs. It contains most of the 
 ## 3. [Soccer](https://divu050704.github.io/blog/hackthebox/soccer)
 ## 4. [Photobomb](https://divu050704.github.io/blog/hackthebox/photobomb)
 ## 5. [Precious](https://divu050704.github.io/blog/hackthebox/precious)
+## 6. [monitorsTWO](https://divu050704.github.io/blog/hackthebox/monitorsTWO)
