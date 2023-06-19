@@ -54,3 +54,5 @@ This is my tryhackme Index, for walkthroughs and blogs. It contains most of the 
 ## 41. [Vulnnet Endgame](https://divu050704.github.io/blog/tryhackme/vulnnetendgame)
 ## 42. [Archangel](https://divu050704.github.io/blog/tryhackme/archangel)
 ## 43. [Bsides guatemala Library](https://divu050704.github.io/blog/tryhackme/bsidesgtlibrary)
+## 44. [Plotted-TMS](https://divu050704.github.io/blog/tryhackme/plotteddtms)
+## 45. [Weasel](https://divu050704.github.io/blog/tryhackme/weasel)
