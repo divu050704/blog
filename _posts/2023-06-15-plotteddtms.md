@@ -1,5 +1,5 @@
 ---
-title: "relevant"
+title: "Plotted-TMS"
 author: "Divyanshu Sharma"
 date: 2023-06-15
 permalink: /tryhackme/plotteddtms 
